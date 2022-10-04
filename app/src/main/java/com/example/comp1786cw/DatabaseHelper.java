@@ -210,4 +210,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return trip;
     }
+
+    public void EditTrip(int id, String name, String destination, String date, String description, int duration, boolean riskAssessment){
+        ContentValues cv = new ContentValues();
+        cv.put(NAME, name);
+        cv.put(DESTINATION, destination);
+        cv.put(DATE, date);
+        cv.put(DESCRIPTION, description);
+        cv.put(DURATION, duration);
+        cv.put(RISK_ASSESSMENT, riskAssessment);
+
+        database.update(TABLE_TRIP, cv, TRIP_ID + " = " + id, null);
+    }
+
+    public ArrayList<String> SearchTrip(String name){
+        Cursor cursor = database.query(TABLE_TRIP, new String[] { TRIP_ID, NAME, DESTINATION, DATE, DESCRIPTION, DURATION, RISK_ASSESSMENT },
+                NAME + " LIKE " + "'%" + name + "%'", null, null, null,  TRIP_ID);
+        cursor.moveToFirst();
+        ArrayList<String> results = new ArrayList<>();
+        while (!cursor.isAfterLast()) {
+            int id = cursor.getInt(0);
+            String nameDb = cursor.getString(1);
+            String destination = cursor.getString(2);
+            String date = cursor.getString(3);
+            String des = cursor.getString(4);
+            int duration = cursor.getInt(5);
+            int riskAssessment = cursor.getInt(6);
+
+            Trip trip = new Trip();
+            trip.setId(id);
+            trip.setName(nameDb);
+            trip.setDestination(destination);
+            trip.setDate(date);
+            trip.setDescription(des);
+            trip.setDuration(duration);
+            trip.setRiskAssessment(riskAssessment == 0 ? false : true);
+
+            results.add(trip.toString());
+
+            cursor.moveToNext();
+        }
+        return results;
+    }
 }

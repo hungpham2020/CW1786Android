@@ -7,8 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import entites.Trip;
 
@@ -27,6 +33,15 @@ public class EditTrip extends AppCompatActivity {
         RadioButton rdBtnNo = findViewById(R.id.rdBtnEditNo);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        Button btnSave = findViewById(R.id.btnEditSave);
+
+        inputDate.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                MainActivity.DatePickerFragment dlg = new MainActivity.DatePickerFragment();
+                dlg.setDateInput(inputDate);
+                dlg.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
 
         Intent intent = getIntent();
         int id = intent.getIntExtra("Id", 0);
@@ -37,7 +52,7 @@ public class EditTrip extends AppCompatActivity {
         inputDestination.setText(trip.getDestination());
         inputDate.setText(trip.getDate());
         inputDescription.setText(trip.getDescription());
-//        inputDuration.setText(trip.getDuration());
+        inputDuration.setText(String.valueOf(trip.getDuration()));
         if(trip.isRiskAssessment()){
             rdBtnYes.setChecked(true);
             rdBtnNo.setChecked(false);
@@ -46,6 +61,28 @@ public class EditTrip extends AppCompatActivity {
             rdBtnYes.setChecked(false);
             rdBtnNo.setChecked(true);
         }
+
+        AtomicBoolean riskAssessment = new AtomicBoolean(true);
+
+        rdBtnYes.setOnClickListener(v -> {
+            riskAssessment.set(true);
+        });
+
+        rdBtnNo.setOnClickListener(v -> {
+            riskAssessment.set(false);
+        });
+
+        btnSave.setOnClickListener(view -> {
+            dbHelper.EditTrip(id, inputName.getText().toString(),
+                    inputDestination.getText().toString(),
+                    inputDate.getText().toString(),
+                    inputDescription.getText().toString(),
+                    Integer.parseInt(inputDuration.getText().toString()),
+                    riskAssessment.get());
+            Toast.makeText(this, "Edit successfully", Toast.LENGTH_SHORT).show();
+            finish();
+            startActivity(new Intent(this, ViewAllTrips.class));
+        });
     }
 
     @Override

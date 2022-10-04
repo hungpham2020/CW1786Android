@@ -8,7 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,6 +27,8 @@ public class ViewAllTrips extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        EditText inputSearch = findViewById(R.id.inputSearch);
+        Button btnSearch = findViewById(R.id.btnSearch);
 
         List<String> trips = dbHelper.getTrips();
         if(trips.size() == 0){
@@ -62,6 +67,17 @@ public class ViewAllTrips extends AppCompatActivity {
                 }
             }));
             builder.show();
+        });
+
+        btnSearch.setOnClickListener(view -> {
+            if(inputSearch.getText().toString().isEmpty()){
+                return;
+            }
+            else {
+                List<String> newList = dbHelper.SearchTrip(inputSearch.getText().toString());
+                ArrayAdapter<String> newAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, newList);
+                listView.setAdapter(newAdapter);
+            }
         });
     }
 
