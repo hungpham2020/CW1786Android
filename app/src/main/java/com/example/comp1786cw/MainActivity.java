@@ -20,17 +20,22 @@ import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
+    EditText name;
+    EditText destination;
+    EditText date;
+    EditText description;
+    EditText duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText name = findViewById(R.id.inputName);
-        EditText destination = findViewById(R.id.inputEditDestination);
-        EditText date = findViewById(R.id.inputEditDate);
-        EditText description = findViewById(R.id.inputEditDescription);
-        EditText duration = findViewById(R.id.inputEditDuration);
+        name = findViewById(R.id.inputName);
+        destination = findViewById(R.id.inputEditDestination);
+        date = findViewById(R.id.inputEditDate);
+        description = findViewById(R.id.inputEditDescription);
+        duration = findViewById(R.id.inputEditDuration);
         RadioButton rdBtnYes = findViewById(R.id.rdBtnEditYes);
         RadioButton rdBtnNo = findViewById(R.id.rdBtnEditNo);
 
@@ -121,37 +126,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private boolean validation(String name, String destination, String date, String duration){
+    private boolean validation(String nameVal, String destinationVal, String dateVal, String durationVal){
         boolean isPass = true;
-        String message = "";
-        TextView errors = findViewById(R.id.txtErr);
+        name = findViewById(R.id.inputName);
+        destination = findViewById(R.id.inputEditDestination);
+        date = findViewById(R.id.inputEditDate);
+        duration = findViewById(R.id.inputEditDuration);
 
-        if(name.isEmpty()){
+        if(nameVal.isEmpty()){
             isPass = false;
-            message += "\t- Name is required \n";
+            name.setError("Name is required");
         }
-        if(destination.isEmpty()){
+        if(destinationVal.isEmpty()){
             isPass = false;
-            message += "\t- Destination is required \n";
+            destination.setError("Destination is required");
         }
-        if(date.isEmpty()){
+        if(dateVal.isEmpty()){
             isPass = false;
-            message += "\t- Date is required \n";
+            date.setError("Date is required");
         }
-        if(!duration.isEmpty()){
-            if(!isStringInt(duration)){
+        if(!durationVal.isEmpty()){
+            if(!isStringInt(durationVal)){
                 isPass = false;
-                message += "\t- Duration must be number \n";
+                duration.setError("Duration must be number");
             }
         } else {
             isPass = false;
-            message += "\t- Duration is required \n";
-        }
-        if(!message.isEmpty()){
-            errors.setText("Error Sumaries:" + "\n" + message);
-        }
-        if(isPass){
-            errors.setText("");
+            duration.setError("Duration is required");
         }
         return isPass;
     }
